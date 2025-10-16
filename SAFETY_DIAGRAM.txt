@@ -1,0 +1,158 @@
+================================================================================
+SAFE TRAFFIC LIGHT OPERATION DIAGRAM
+================================================================================
+
+CRITICAL SAFETY RULE:
+✓ Both streets are NEVER GREEN at the same time
+✓ One street must be RED while the other cycles through GREEN → YELLOW
+✓ 1-second safety buffer with BOTH streets RED between phase changes
+
+================================================================================
+COMPLETE CYCLE (26 seconds total)
+================================================================================
+
+PHASE 1: H-Street Active (13 seconds)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Time  | V-Street        | H-Street
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+0s    | 🔴 RED          | 🟢 GREEN
+1s    | 🔴 RED          | 🟢 GREEN
+2s    | 🔴 RED          | 🟢 GREEN
+3s    | 🔴 RED          | 🟢 GREEN
+4s    | 🔴 RED          | 🟢 GREEN
+5s    | 🔴 RED          | 🟢 GREEN
+6s    | 🔴 RED          | 🟢 GREEN
+7s    | 🔴 RED          | 🟢 GREEN
+8s    | 🔴 RED          | 🟢 GREEN
+9s    | 🔴 RED          | 🟡 YELLOW (transition)
+10s   | 🔴 RED          | 🟡 YELLOW
+11s   | 🔴 RED          | 🟡 YELLOW
+12s   | 🔴 RED          | 🔴 RED (SAFETY BUFFER)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PHASE 2: V-Street Active (13 seconds)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Time  | V-Street        | H-Street
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+13s   | 🟢 GREEN        | 🔴 RED
+14s   | 🟢 GREEN        | 🔴 RED
+15s   | 🟢 GREEN        | 🔴 RED
+16s   | 🟢 GREEN        | 🔴 RED
+17s   | 🟢 GREEN        | 🔴 RED
+18s   | 🟢 GREEN        | 🔴 RED
+19s   | 🟢 GREEN        | 🔴 RED
+20s   | 🟢 GREEN        | 🔴 RED
+21s   | 🟢 GREEN        | 🔴 RED
+22s   | 🟡 YELLOW       | 🔴 RED (transition)
+23s   | 🟡 YELLOW       | 🔴 RED
+24s   | 🟡 YELLOW       | 🔴 RED
+25s   | 🔴 RED          | 🔴 RED (SAFETY BUFFER)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Then CYCLE REPEATS from Phase 1...
+
+================================================================================
+SAFETY FEATURES
+================================================================================
+
+1. ✅ NO GREEN COLLISION
+   - V-Street GREEN and H-Street GREEN NEVER occur simultaneously
+   - Prevents intersection crashes
+
+2. ✅ ALL-RED CLEARANCE TIME
+   - 1 second with both streets RED between each phase
+   - Allows any vehicles in intersection to clear
+
+3. ✅ PREDICTABLE TIMING
+   - Each street gets exactly 9 seconds of GREEN time
+   - Each street gets exactly 3 seconds of YELLOW warning
+   - Total RED time per street: 13 seconds (waiting for other street)
+
+4. ✅ PROPER YELLOW WARNING
+   - 3-second yellow gives drivers time to stop safely
+   - Yellow ONLY appears when transitioning from GREEN to RED
+
+================================================================================
+TIMING BREAKDOWN
+================================================================================
+
+Per Street Per Cycle:
+- GREEN:  9 seconds  (traffic flows)
+- YELLOW: 3 seconds  (warning, prepare to stop)
+- RED:    13 seconds (other street's turn + safety buffer)
+- TOTAL:  25 seconds per complete cycle
+
+Safety Buffers:
+- All-RED time: 1 second between each phase change
+- Total safety time: 2 seconds per complete cycle
+
+Total Cycle Time: 26 seconds (13s Phase 1 + 13s Phase 2)
+
+================================================================================
+STATE TRANSITION DIAGRAM
+================================================================================
+
+H-STREET SEQUENCE:
+   RED → GREEN (9s) → YELLOW (3s) → RED (1s safety) → [V-Street's turn]
+
+V-STREET SEQUENCE:
+   RED → GREEN (9s) → YELLOW (3s) → RED (1s safety) → [H-Street's turn]
+
+NEVER HAPPENS (FORBIDDEN):
+   ❌ V-Street GREEN + H-Street GREEN (CRASH!)
+   ❌ V-Street YELLOW + H-Street GREEN (Unsafe)
+   ❌ V-Street GREEN + H-Street YELLOW (Unsafe)
+
+ALWAYS SAFE:
+   ✅ V-Street RED + H-Street GREEN
+   ✅ V-Street RED + H-Street YELLOW
+   ✅ V-Street RED + H-Street RED (safety buffer)
+   ✅ V-Street GREEN + H-Street RED
+   ✅ V-Street YELLOW + H-Street RED
+   ✅ V-Street RED + H-Street RED (safety buffer)
+
+================================================================================
+VISUAL TIMELINE (First 2 Cycles)
+================================================================================
+
+Seconds: 0----5----10---15---20---25---30---35---40---45---50
+         |         |         |         |         |         |
+V-Street: RRRRRRRRRRRRR⚫GGGGGGGGGYYY⚫RRRRRRRRRRRRR⚫GGGGGGGGGYYY⚫
+H-Street: GGGGGGGGGYYY⚫RRRRRRRRRRRRR⚫GGGGGGGGGYYY⚫RRRRRRRRRRRRR⚫
+
+Legend:
+  R = RED light
+  G = GREEN light  
+  Y = YELLOW light
+  ⚫ = Safety buffer (both RED)
+
+================================================================================
+REAL-WORLD BEHAVIOR
+================================================================================
+
+What Drivers Experience:
+
+AT V-STREET:
+1. Light is RED (wait 13 seconds while H-Street traffic passes)
+2. Light turns GREEN (go for 9 seconds)
+3. Light turns YELLOW (3 seconds to stop safely)
+4. Light turns RED (brief pause, then H-Street gets turn)
+
+AT H-STREET:
+1. Light is RED (wait 13 seconds while V-Street traffic passes)
+2. Light turns GREEN (go for 9 seconds)
+3. Light turns YELLOW (3 seconds to stop safely)
+4. Light turns RED (brief pause, then V-Street gets turn)
+
+================================================================================
+EMERGENCY SHUTDOWN SEQUENCE
+================================================================================
+
+When Ctrl+C is pressed:
+1. Both streets immediately turn RED
+2. RED lights stay on for 2 seconds (safety)
+3. All lights turn OFF
+4. GPIO pins cleaned up
+5. System exits safely
+
+================================================================================
