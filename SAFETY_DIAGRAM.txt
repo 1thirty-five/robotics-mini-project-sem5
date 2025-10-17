@@ -98,18 +98,10 @@ H-STREET SEQUENCE:
 V-STREET SEQUENCE:
    RED → GREEN (9s) → YELLOW (3s) → RED (1s safety) → [H-Street's turn]
 
-NEVER HAPPENS (FORBIDDEN):
+NEVER HAPPENS :
    ❌ V-Street GREEN + H-Street GREEN (CRASH!)
    ❌ V-Street YELLOW + H-Street GREEN (Unsafe)
    ❌ V-Street GREEN + H-Street YELLOW (Unsafe)
-
-ALWAYS SAFE:
-   ✅ V-Street RED + H-Street GREEN
-   ✅ V-Street RED + H-Street YELLOW
-   ✅ V-Street RED + H-Street RED (safety buffer)
-   ✅ V-Street GREEN + H-Street RED
-   ✅ V-Street YELLOW + H-Street RED
-   ✅ V-Street RED + H-Street RED (safety buffer)
 
 ================================================================================
 VISUAL TIMELINE (First 2 Cycles)
@@ -125,24 +117,6 @@ Legend:
   G = GREEN light  
   Y = YELLOW light
   ⚫ = Safety buffer (both RED)
-
-================================================================================
-REAL-WORLD BEHAVIOR
-================================================================================
-
-What Drivers Experience:
-
-AT V-STREET:
-1. Light is RED (wait 13 seconds while H-Street traffic passes)
-2. Light turns GREEN (go for 9 seconds)
-3. Light turns YELLOW (3 seconds to stop safely)
-4. Light turns RED (brief pause, then H-Street gets turn)
-
-AT H-STREET:
-1. Light is RED (wait 13 seconds while V-Street traffic passes)
-2. Light turns GREEN (go for 9 seconds)
-3. Light turns YELLOW (3 seconds to stop safely)
-4. Light turns RED (brief pause, then V-Street gets turn)
 
 ================================================================================
 EMERGENCY SHUTDOWN SEQUENCE

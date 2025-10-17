@@ -169,6 +169,10 @@ class TrafficControlSystem:
         self.pedestrian_h_active = False
         self.h_street_is_red = False
         
+        # Night mode state
+        self.night_mode = False
+        self.night_mode_toggle_requested = False
+        
         # Start keyboard listener thread if available
         if KEYBOARD_AVAILABLE:
             self.listener_thread = threading.Thread(target=self._keyboard_listener, daemon=True)
@@ -187,10 +191,11 @@ class TrafficControlSystem:
         if KEYBOARD_AVAILABLE:
             print(f"🚶 Press 'O' key to request pedestrian crossing on V-Street")
             print(f"🚶 Press 'P' key to request pedestrian crossing on H-Street")
+            print(f"🌙 Press 'N' key to toggle NIGHT MODE (flashing yellow)")
         print("="*60)
     
     def _keyboard_listener(self):
-        """Listen for 'o' and 'p' key presses for pedestrian crossing requests"""
+        """Listen for 'o', 'p', and 'n' key presses for pedestrian crossing requests and night mode"""
         while True:
             try:
                 if keyboard.is_pressed('o'):
@@ -202,6 +207,14 @@ class TrafficControlSystem:
                     if not self.pedestrian_h_request and not self.pedestrian_h_active:
                         self.pedestrian_h_request = True
                         print("\n🚶 [PEDESTRIAN REQUEST] Crossing requested on H-Street!")
+                    time.sleep(0.5)  # Debounce
+                elif keyboard.is_pressed('n'):
+                    if not self.night_mode_toggle_requested:
+                        self.night_mode_toggle_requested = True
+                        if not self.night_mode:
+                            print("\n🌙 [NIGHT MODE] Activating night mode - All lights will flash YELLOW")
+                        else:
+                            print("\n☀️ [DAY MODE] Deactivating night mode - Returning to normal operation")
                     time.sleep(0.5)  # Debounce
             except:
                 break
@@ -267,6 +280,82 @@ class TrafficControlSystem:
             self.h_street.all_off()
             time.sleep(0.5)
         print(">>> System ready!\n")
+    
+    def _night_mode_cycle(self):
+        """
+        Night Mode Operation - All lights flash YELLOW
+        
+        Behavior:
+        - Both streets flash yellow continuously (0.5s on, 0.5s off)
+        - When pedestrian crossing requested:
+          * Respective street turns RED
+          * Pedestrian WALK signal activates for 9 seconds
+          * Street returns to flashing YELLOW after 1 second
+        - Press 'N' again to exit night mode
+        """
+        print("\n" + "="*60)
+        print("🌙 NIGHT MODE ACTIVE")
+        print("="*60)
+        print("All lights flashing YELLOW")
+        print("Press 'O' for V-Street pedestrian crossing")
+        print("Press 'P' for H-Street pedestrian crossing")
+        print("Press 'N' to exit night mode")
+        print("="*60 + "\n")
+        
+        while self.night_mode:
+            # Check for night mode toggle
+            if self.night_mode_toggle_requested:
+                self.night_mode = False
+                self.night_mode_toggle_requested = False
+                print("\n☀️ Exiting night mode... Returning to normal traffic operation")
+                break
+            
+            # Check for V-Street pedestrian crossing
+            if self.pedestrian_v_request:
+                print("\n🚶 [NIGHT MODE] V-Street pedestrian crossing requested")
+                # V-Street turns RED for pedestrian crossing
+                self.v_street.red_on()
+                self.h_street.all_off()  # Turn off H-Street temporarily
+                
+                # Activate V-Street pedestrian crossing
+                print(f"🚶 Activating V-Street pedestrian crossing for {PEDESTRIAN_WALK_TIME} seconds...")
+                self._activate_pedestrian_v_walk()
+                time.sleep(PEDESTRIAN_WALK_TIME)
+                self._deactivate_pedestrian_v_walk()
+                self.pedestrian_v_request = False
+                
+                # Keep RED for 1 more second
+                time.sleep(1)
+                print("🌙 Returning to flashing yellow mode\n")
+                self.v_street.all_off()
+            
+            # Check for H-Street pedestrian crossing
+            elif self.pedestrian_h_request:
+                print("\n🚶 [NIGHT MODE] H-Street pedestrian crossing requested")
+                # H-Street turns RED for pedestrian crossing
+                self.h_street.red_on()
+                self.v_street.all_off()  # Turn off V-Street temporarily
+                
+                # Activate H-Street pedestrian crossing
+                print(f"🚶 Activating H-Street pedestrian crossing for {PEDESTRIAN_WALK_TIME} seconds...")
+                self._activate_pedestrian_h_walk()
+                time.sleep(PEDESTRIAN_WALK_TIME)
+                self._deactivate_pedestrian_h_walk()
+                self.pedestrian_h_request = False
+                
+                # Keep RED for 1 more second
+                time.sleep(1)
+                print("🌙 Returning to flashing yellow mode\n")
+                self.h_street.all_off()
+            
+            else:
+                # Normal flashing yellow operation
+                self.v_street.yellow_on()
+                self.h_street.yellow_on()
+                time.sleep(0.5)
+                self.v_street.all_off()
+                self.h_street.all_off()
+                time.sleep(0.5)
     
     def run_cycle(self):
         """
@@ -346,6 +435,19 @@ class TrafficControlSystem:
             
             cycle_count = 0
             while True:
+                # Check for night mode toggle
+                if self.night_mode_toggle_requested:
+                    self.night_mode = not self.night_mode
+                    self.night_mode_toggle_requested = False
+                    
+                    if self.night_mode:
+                        # Enter night mode
+                        self._night_mode_cycle()
+                        # After exiting night mode, continue with normal operation
+                        cycle_count = 0
+                        continue
+                
+                # Normal day mode operation
                 cycle_count += 1
                 print(f"\n{'='*60}")
                 print(f"CYCLE {cycle_count} - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
