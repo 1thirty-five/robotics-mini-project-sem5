@@ -107,7 +107,7 @@ class TrafficLight:
         
         # Setup GPIO pins
         GPIO.setup(self.red_pin, GPIO.OUT, initial=GPIO.LOW)
-        GPIO.setup(self.yellow_pin, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(self.yellow_pin, GPIO.OUT, initial=GPIO.LOW
         GPIO.setup(self.green_pin, GPIO.OUT, initial=GPIO.LOW)
     
     def red_on(self):
